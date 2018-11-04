@@ -16,9 +16,12 @@ import type Agent from '../../agent/Agent';
 const emptyFunction = () => {};
 
 module.exports = (bridge: Bridge, agent: Agent, hook: Object) => {
+  bridge.onCall('profiler:initialized', (profilingIsSupported: boolean) => {
+    hook.emit('profiler:initialized', profilingIsSupported);
+  });
+
   const checkIfProfilingIsSupported = () => {
     let profilingIsSupported = false;
-
     // Feature detection for profiling mode.
     // The presence of an "treeBaseDuration" field signifies:
     // 1) This is a new enough version of React (e.g. > 16.4 which was the initial profiling release)

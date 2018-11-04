@@ -26,6 +26,7 @@ class ProfilerPlugin {
   profilerStore: ProfilerStore;
 
   constructor(store: Store, bridge: Bridge, refresh: () => void) {
+    this.initialized = false;
     this.bridge = bridge;
     this.store = store;
     this.profilingIsSupported = false;
@@ -37,6 +38,20 @@ class ProfilerPlugin {
       if (this.profilingIsSupported !== profilingIsSupported) {
         this.profilingIsSupported = profilingIsSupported;
         refresh();
+
+        // TODO: replace this with a proper initialization flow
+        // The code below is only for the proof-of-concept and should
+        // be moved to more proper places in the devtools.
+        if (!this.initialized) {
+          this.initialized = true;
+          this.profilerStore.setIsRecording(true);
+          setTimeout(() => {
+            if (profilingIsSupported) {
+              store.setSelectedTab('Profiler');
+            }
+            bridge.call('profiler:initialized', [profilingIsSupported])
+          }, 750); // TODO: next step is to trigger the initialized call only when profiler is properly hooked
+        }
       }
     });
   }

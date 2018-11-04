@@ -126,6 +126,11 @@ function installGlobalHook(window: Object) {
     // Shared between Stack and Fiber:
     _renderers: {},
     helpers: {},
+    waitForProfiler: function() {
+      return new Promise(resolve => {
+        hook.on('profiler:initialized', resolve);
+      });
+    },
     checkDCE: function(fn) {
       // This runs for production versions of React.
       // Needs to be super safe.
